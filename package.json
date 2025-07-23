@@ -2,43 +2,76 @@
   "name": "gm-bloc-generator",
   "displayName": "GM BLoC Generator",
   "description": "Generate BLoC files (bloc.dart, event.dart, state.dart) with templates",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "publisher": "ghozimahdi",
+  "author": {
+    "name": "Ghozi Mahdi"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/ghozimahdi"
+  },
+  "pricing": "Free",
   "repository": {
     "type": "git",
     "url": "https://github.com/ghozimahdi/vscode-flutter-bloc-generator"
+  },
+  "bugs": {
+    "url": "https://github.com/ghozimahdi/vscode-flutter-bloc-generator/issues",
+    "email": "ghozi.dev@gmail.com"
   },
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
-    "Other"
+    "Snippets",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "dart",
+    "flutter",
+    "bloc",
+    "state-management",
+    "freezed",
+    "injectable"
   ],
   "activationEvents": [
-    "workspaceContains:pubspec.yaml",
-    "onLanguage:dart"
-  ],
-  "extensionKind": [
-    "workspace"
+    "workspaceContains:**/pubspec.yaml"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "gm-bloc-generator.createBloc",
-        "title": "Create BLoC Files",
+        "command": "gm.extension.new-bloc",
+        "title": "GM: New Bloc",
+        "category": "GM BLoC"
+      },
+      {
+        "command": "gm.extension.new-cubit",
+        "title": "GM: New Cubit",
         "category": "GM BLoC"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "gm-bloc-generator.createBloc",
-          "group": "navigation@100"
+          "command": "gm.extension.new-bloc",
+          "group": "gmBlocGroup@1",
+          "when": "explorerResourceIsFolder"
+        },
+        {
+          "command": "gm.extension.new-cubit",
+          "group": "gmBlocGroup@1",
+          "when": "explorerResourceIsFolder"
         }
       ],
       "commandPalette": [
         {
-          "command": "gm-bloc-generator.createBloc"
+          "command": "gm.extension.new-bloc",
+          "when": "editorLangId == dart"
+        },
+        {
+          "command": "gm.extension.new-cubit",
+          "when": "editorLangId == dart"
         }
       ]
     }

@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
   console.log("GM BLoC Generator is now active!");
 
   let disposable = vscode.commands.registerCommand(
-    "gm-bloc-generator.createBloc",
+    "gm.extension.new-bloc",
     async (uri?: vscode.Uri) => {
       // Get the current workspace folder
       const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // Prompt user for bloc name
       const blocName = await vscode.window.showInputBox({
-        prompt: "Enter BLoC name (e.g., user, product, auth)",
+        prompt: "Enter BLoC name (e.g., user, product, search_suggestion)",
         placeHolder: "user",
         validateInput: (value) => {
           if (!value || value.trim() === "") {
@@ -89,7 +89,75 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  // Register Cubit command
+  let cubitDisposable = vscode.commands.registerCommand(
+    "gm.extension.new-cubit",
+    async (uri?: vscode.Uri) => {
+      // Get the current workspace folder
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      if (!workspaceFolders) {
+        vscode.window.showErrorMessage("No workspace folder found");
+        return;
+      }
+
+      // Prompt user for cubit name
+      const cubitName = await vscode.window.showInputBox({
+        prompt: "Enter Cubit name (e.g., user, product, search_suggestion)",
+        placeHolder: "user",
+        validateInput: (value) => {
+          if (!value || value.trim() === "") {
+            return "Cubit name cannot be empty";
+          }
+          if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(value)) {
+            return "Cubit name must start with a letter and contain only letters, numbers, and underscores";
+          }
+          return null;
+        },
+      });
+
+      if (!cubitName) {
+        return;
+      }
+
+      // Get the directory where to create the files
+      let targetDir: string;
+
+      // Use the URI from context menu if available, otherwise use active editor
+      if (uri) {
+        // Check if it's a file or folder
+        const stat = await vscode.workspace.fs.stat(uri);
+        if (stat.type === vscode.FileType.Directory) {
+          targetDir = uri.fsPath;
+        } else {
+          targetDir = path.dirname(uri.fsPath);
+        }
+      } else {
+        // Check if there's an active editor
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor) {
+          targetDir = path.dirname(activeEditor.document.uri.fsPath);
+        } else {
+          // Use the first workspace folder
+          targetDir = workspaceFolders[0].uri.fsPath;
+        }
+      }
+
+      // Create the cubit files
+      try {
+        await createCubitFiles(cubitName, targetDir);
+        vscode.window.showInformationMessage(
+          `Cubit files created successfully: ${cubitName}_cubit.dart, ${cubitName}_state.dart`
+        );
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          `Failed to create Cubit files: ${error}`
+        );
+      }
+    }
+  );
+
   context.subscriptions.push(disposable);
+  context.subscriptions.push(cubitDisposable);
 }
 
 async function createBlocFiles(
@@ -123,7 +191,6 @@ class ${Name}Bloc extends Bloc<${Name}Event, ${Name}State> {
     Emitter<${Name}State> emit,
   ) async {}
 }
-
 `;
 
   // Event file template
@@ -133,7 +200,6 @@ class ${Name}Bloc extends Bloc<${Name}Event, ${Name}State> {
 class ${Name}Event with _$${Name}Event {
   const factory ${Name}Event.init() = _InitEvent;
 }
-  
 `;
 
   // State file template
@@ -144,7 +210,6 @@ class ${Name}State with _$${Name}State {
   const factory ${Name}State.idle() = ${Name}IdleState;
   const factory ${Name}State.done() = ${Name}DoneState;
 }
-
 `;
 
   // Create the files
@@ -176,6 +241,70 @@ class ${Name}State with _$${Name}State {
   // Open the bloc file in the editor
   const blocUri = vscode.Uri.file(blocFilePath);
   await vscode.window.showTextDocument(blocUri);
+}
+
+async function createCubitFiles(
+  cubitName: string,
+  targetDir: string
+): Promise<void> {
+  const name = cubitName.toLowerCase();
+  // Convert snake_case to PascalCase for class names
+  const Name = cubitName
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
+
+  // Cubit file template
+  const cubitTemplate = `import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
+
+part '${name}_cubit.freezed.dart';
+part '${name}_state.dart';
+
+@injectable
+class ${Name}Cubit extends Cubit<${Name}State> {
+  ${Name}Cubit() : super(const ${Name}State.idle());
+
+  void init() {
+    // TODO: Implement init logic
+  }
+}
+`;
+
+  // State file template
+  const stateTemplate = `part of '${name}_cubit.dart';
+
+@freezed
+class ${Name}State with _$${Name}State {
+  const factory ${Name}State.idle() = ${Name}IdleState;
+  const factory ${Name}State.done() = ${Name}DoneState;
+}
+`;
+
+  // Create the files
+  const cubitFilePath = path.join(targetDir, `${name}_cubit.dart`);
+  const stateFilePath = path.join(targetDir, `${name}_state.dart`);
+
+  // Check if files already exist
+  if (fs.existsSync(cubitFilePath) || fs.existsSync(stateFilePath)) {
+    const overwrite = await vscode.window.showWarningMessage(
+      "Some Cubit files already exist. Do you want to overwrite them?",
+      "Yes",
+      "No"
+    );
+    if (overwrite !== "Yes") {
+      return;
+    }
+  }
+
+  // Write files
+  fs.writeFileSync(cubitFilePath, cubitTemplate);
+  fs.writeFileSync(stateFilePath, stateTemplate);
+
+  // Open the cubit file in the editor
+  const cubitUri = vscode.Uri.file(cubitFilePath);
+  await vscode.window.showTextDocument(cubitUri);
 }
 
 export function deactivate() {}
