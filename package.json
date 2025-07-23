@@ -2,7 +2,7 @@
   "name": "gm-bloc-generator",
   "displayName": "GM BLoC Generator",
   "description": "Generate BLoC files (bloc.dart, event.dart, state.dart) with templates",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "ghozimahdi",
   "author": {
     "name": "Ghozi Mahdi"
@@ -55,12 +55,12 @@
       "explorer/context": [
         {
           "command": "gm.extension.new-bloc",
-          "group": "gmBlocGroup@1",
+          "group": "blocGroup@1",
           "when": "explorerResourceIsFolder"
         },
         {
           "command": "gm.extension.new-cubit",
-          "group": "gmBlocGroup@1",
+          "group": "blocGroup@1",
           "when": "explorerResourceIsFolder"
         }
       ],
