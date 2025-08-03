@@ -2,29 +2,8 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 
-export function activate(context: vscode.ExtensionContext) {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (!workspaceFolders || workspaceFolders.length === 0) {
-    return;
-  }
-
-  const pubspecPath = path.join(workspaceFolders[0].uri.fsPath, "pubspec.yaml");
-  if (!fs.existsSync(pubspecPath)) {
-    return;
-  }
-
-  const pubspecContent = fs.readFileSync(pubspecPath, "utf8");
-  const isFlutterProject = pubspecContent.includes("flutter:");
-
-  if (!isFlutterProject) {
-    console.log(
-      "GM BLoC Generator: Not a Flutter project, skipping activation."
-    );
-    return;
-  }
-
-  console.log("GM BLoC Generator is now active!");
-
+function registerCommands(context: vscode.ExtensionContext) {
+  // Register BLoC command
   let disposable = vscode.commands.registerCommand(
     "gm.extension.new-bloc",
     async (uri?: vscode.Uri) => {
@@ -158,6 +137,36 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(disposable);
   context.subscriptions.push(cubitDisposable);
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  console.log("GM BLoC Generator: Extension activation started");
+  
+  // Always register commands first
+  registerCommands(context);
+  
+  // Check if it's a Flutter project for additional features
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    console.log("GM BLoC Generator: No workspace folder found, but commands are registered");
+    return;
+  }
+
+  const pubspecPath = path.join(workspaceFolders[0].uri.fsPath, "pubspec.yaml");
+  if (!fs.existsSync(pubspecPath)) {
+    console.log("GM BLoC Generator: No pubspec.yaml found, but commands are registered");
+    return;
+  }
+
+  const pubspecContent = fs.readFileSync(pubspecPath, "utf8");
+  const isFlutterProject = pubspecContent.includes("flutter:");
+
+  if (!isFlutterProject) {
+    console.log("GM BLoC Generator: Not a Flutter project, but commands are registered");
+    return;
+  }
+
+  console.log("GM BLoC Generator: Flutter project detected, extension is fully active!");
 }
 
 async function createBlocFiles(

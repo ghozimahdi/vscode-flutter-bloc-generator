@@ -2,7 +2,7 @@
   "name": "gm-bloc-generator",
   "displayName": "GM BLoC Generator",
   "description": "Generate BLoC files (bloc.dart, event.dart, state.dart) with templates",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "publisher": "ghozimahdi",
   "author": {
     "name": "Ghozi Mahdi"
@@ -35,7 +35,7 @@
     "injectable"
   ],
   "activationEvents": [
-    "workspaceContains:**/pubspec.yaml"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -66,12 +66,10 @@
       ],
       "commandPalette": [
         {
-          "command": "gm.extension.new-bloc",
-          "when": "editorLangId == dart"
+          "command": "gm.extension.new-bloc"
         },
         {
-          "command": "gm.extension.new-cubit",
-          "when": "editorLangId == dart"
+          "command": "gm.extension.new-cubit"
         }
       ]
     }
