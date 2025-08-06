@@ -2,7 +2,7 @@
   "name": "gm-bloc-generator",
   "displayName": "GM BLoC Generator",
   "description": "Generate BLoC files (bloc.dart, event.dart, state.dart) with templates",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "publisher": "ghozimahdi",
   "author": {
     "name": "Ghozi Mahdi"

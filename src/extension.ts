@@ -191,7 +191,7 @@ part '${name}_state.dart';
 
 @injectable
 class ${Name}Bloc extends Bloc<${Name}Event, ${Name}State> {
-  ${Name}Bloc() : super(const ${Name}State.idle()) {
+  ${Name}Bloc() : super(const ${Name}State()) {
     on<_InitEvent>(_initEvent);
   }
 
@@ -216,8 +216,17 @@ class ${Name}Event with _$${Name}Event {
 
 @freezed
 class ${Name}State with _$${Name}State {
-  const factory ${Name}State.idle() = ${Name}IdleState;
-  const factory ${Name}State.done() = ${Name}DoneState;
+  const factory ${Name}State({
+    @Default(Get${Name}State.idle()) Get${Name}State ${pascalToCamelCase(Name)}State,
+  }) = _${Name}State;
+}
+
+@freezed
+abstract class Get${Name}State with _$${Name}State {
+  const factory Get${Name}State.idle() = _Get${Name}IdleState;
+  const factory Get${Name}State.loading() = Get${Name}LoadingState;
+  const factory Get${Name}State.error() = Get${Name}ErrorState;
+  const factory Get${Name}State.done() = Get${Name}DoneState;
 }
 `;
 
@@ -273,7 +282,7 @@ part '${name}_state.dart';
 
 @injectable
 class ${Name}Cubit extends Cubit<${Name}State> {
-  ${Name}Cubit() : super(const ${Name}State.idle());
+  ${Name}Cubit() : super(const ${Name}State());
 
   void init() {
     // TODO: Implement init logic
@@ -286,8 +295,17 @@ class ${Name}Cubit extends Cubit<${Name}State> {
 
 @freezed
 class ${Name}State with _$${Name}State {
-  const factory ${Name}State.idle() = ${Name}IdleState;
-  const factory ${Name}State.done() = ${Name}DoneState;
+  const factory ${Name}State({
+    @Default(Get${Name}State.idle()) Get${Name}State ${pascalToCamelCase(Name)}State,
+  }) = _${Name}State;
+}
+
+@freezed
+abstract class Get${Name}State with _$${Name}State {
+  const factory Get${Name}State.idle() = _Get${Name}IdleState;
+  const factory Get${Name}State.loading() = Get${Name}LoadingState;
+  const factory Get${Name}State.error() = Get${Name}ErrorState;
+  const factory Get${Name}State.done() = Get${Name}DoneState;
 }
 `;
 
@@ -317,3 +335,7 @@ class ${Name}State with _$${Name}State {
 }
 
 export function deactivate() {}
+
+function pascalToCamelCase(name: string): string {
+  return name.charAt(0).toLowerCase() + name.slice(1);
+}
