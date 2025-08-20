@@ -222,7 +222,7 @@ class ${Name}State with _$${Name}State {
 }
 
 @freezed
-abstract class Get${Name}State with _$${Name}State {
+abstract class Get${Name}State with _$Get${Name}State {
   const factory Get${Name}State.idle() = _Get${Name}IdleState;
   const factory Get${Name}State.loading() = Get${Name}LoadingState;
   const factory Get${Name}State.error() = Get${Name}ErrorState;
@@ -301,7 +301,7 @@ class ${Name}State with _$${Name}State {
 }
 
 @freezed
-abstract class Get${Name}State with _$${Name}State {
+abstract class Get${Name}State with _$Get${Name}State {
   const factory Get${Name}State.idle() = _Get${Name}IdleState;
   const factory Get${Name}State.loading() = Get${Name}LoadingState;
   const factory Get${Name}State.error() = Get${Name}ErrorState;

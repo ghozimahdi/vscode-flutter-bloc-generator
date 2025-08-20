@@ -70,7 +70,7 @@ class UserState with _$UserState {
 }
 
 @freezed
-abstract class GetUserState with _$UserState {
+abstract class GetUserState with _$GetUserState {
   const factory GetUserState.idle() = _GetUserIdleState;
   const factory GetUserState.loading() = GetUserLoadingState;
   const factory GetUserState.error() = GetUserErrorState;
@@ -130,7 +130,7 @@ class ProductState with _$ProductState {
 }
 
 @freezed
-abstract class GetProductState with _$ProductState {
+abstract class GetProductState with _$GetProductState {
   const factory GetProductState.idle() = _GetProductIdleState;
   const factory GetProductState.loading() = GetProductLoadingState;
   const factory GetProductState.error() = GetProductErrorState;
@@ -175,7 +175,7 @@ class UserState with _$UserState {
 }
 
 @freezed
-abstract class GetUserState with _$UserState {
+abstract class GetUserState with _$GetUserState {
   const factory GetUserState.idle() = _GetUserIdleState;
   const factory GetUserState.loading() = GetUserLoadingState;
   const factory GetUserState.error() = GetUserErrorState;

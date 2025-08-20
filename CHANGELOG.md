@@ -2,6 +2,28 @@
 
 All notable changes to the GM BLoC Generator extension will be documented in this file.
 
+## [1.0.0] - 2025-08-20
+
+### Fixed
+
+- **CRITICAL**: Fixed Freezed generation error that caused `'_$Get{Name}StateImpl' is missing implementations` error
+- Corrected inconsistent state factory naming in generated templates
+- Fixed state factory naming pattern from `_Get${Name}IdleState` to proper freezed convention
+- Resolved Xcode compilation errors related to freezed generated code
+
+### Changed
+
+- **BREAKING**: Updated state template structure for better consistency
+- State factory constructors now use consistent naming pattern
+- Improved freezed annotation compatibility
+- Enhanced state template generation to prevent freezed errors
+
+### Added
+
+- Better error prevention in generated freezed code
+- Improved state factory naming consistency
+- Enhanced template validation
+
 ## [0.0.8] - 2025-08-06
 
 ### Fixed
@@ -28,7 +50,31 @@ All notable changes to the GM BLoC Generator extension will be documented in thi
 
 ### Template Examples
 
-#### New BLoC State Template (v0.0.8+):
+#### Fixed State Template (v1.0.0+):
+
+```dart
+@freezed
+abstract class GetUserState with _$GetUserState {
+  const factory GetUserState.idle() = UserIdleState;
+  const factory GetUserState.loading() = UserLoadingState;
+  const factory GetUserState.error() = UserErrorState;
+  const factory GetUserState.done() = UserDoneState;
+}
+```
+
+#### Broken State Template (v0.0.8 and below - CAUSES FREEZED ERROR):
+
+```dart
+@freezed
+abstract class GetUserState with _$GetUserState {
+  const factory GetUserState.idle() = _GetUserIdleState;  // ❌ This causes freezed error
+  const factory GetUserState.loading() = GetUserLoadingState;
+  const factory GetUserState.error() = GetUserErrorState;
+  const factory GetUserState.done() = GetUserDoneState;
+}
+```
+
+#### Full State Template Structure:
 
 ```dart
 @freezed
@@ -39,21 +85,11 @@ class UserState with _$UserState {
 }
 
 @freezed
-abstract class GetUserState with _$UserState {
-  const factory GetUserState.idle() = _GetUserIdleState;
-  const factory GetUserState.loading() = GetUserLoadingState;
-  const factory GetUserState.error() = GetUserErrorState;
-  const factory GetUserState.done() = GetUserDoneState;
-}
-```
-
-#### Old BLoC State Template (v0.0.7 and below):
-
-```dart
-@freezed
-class UserState with _$UserState {
-  const factory UserState.idle() = UserIdleState;
-  const factory UserState.done() = UserDoneState;
+abstract class GetUserState with _$GetUserState {
+  const factory GetUserState.idle() = UserIdleState;
+  const factory GetUserState.loading() = UserLoadingState;
+  const factory GetUserState.error() = UserErrorState;
+  const factory GetUserState.done() = UserDoneState;
 }
 ```
 
